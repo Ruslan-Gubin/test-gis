@@ -1,11 +1,12 @@
 import { COLOR_VARIANTS } from "../constants/colors";
+import { ISelector } from "../types";
 import { getRandomNumber } from "./randomNumber";
 
 const getColor = (i: number) => {
   return COLOR_VARIANTS[i]
 }
 
-export function calculateRandomPieSectors() {
+export function calculateRandomPieSectors(): ISelector[] {
   const numSectors = getRandomNumber(1, 8);
   let totalPercentage = 0; 
 

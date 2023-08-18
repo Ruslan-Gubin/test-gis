@@ -1,4 +1,5 @@
 import { PieChardDraw, CanvasDraw } from "../../canvas";
+import { ISelector } from "../../types";
 import { animatePie, calculateRandomPieSectors } from "../../utils";
 import styles from "./pie-chart.css?inline";
 
@@ -7,8 +8,8 @@ class PieChard extends HTMLElement {
   private  canvas: HTMLCanvasElement;
   private  context: CanvasRenderingContext2D | null;
   private  radius: number = 0;
-  private  sectors = calculateRandomPieSectors();
-  private  refreshPieHandler: () => void;
+  private  sectors: ISelector[] = [];
+  private  refreshChardHandler: () => void;
   oldValue: null | string = null;
 
   constructor() {
@@ -29,7 +30,7 @@ class PieChard extends HTMLElement {
     shadow.append(this.root);
     this.root.append(this.canvas);
 
-    this.refreshPieHandler = this.refreshPie.bind(this);
+    this.refreshChardHandler = this.refreshChard.bind(this);
   }
 
   render() {
@@ -39,6 +40,8 @@ class PieChard extends HTMLElement {
       console.error("Failet to get canvas context");
       return;
     }
+ 
+    this.sectors = calculateRandomPieSectors();
 
     const drawService = new CanvasDraw(this.context);
 
@@ -52,16 +55,14 @@ class PieChard extends HTMLElement {
 
     requestAnimationFrame(animateClouser);
 
-    this.canvas.addEventListener("click", this.refreshPieHandler);
+    this.addEventListener("click", this.refreshChardHandler);
   }
 
-  refreshPie() {
-    this.canvas.removeEventListener("click", this.refreshPieHandler);
-    this.sectors = calculateRandomPieSectors();
+ private refreshChard() {
     this.render();
   }
 
-  canvasSetupStyles() {
+  private canvasSetupStyles() {
     this.canvas.width = this.radius * 2;
     this.canvas.height = this.radius * 2;
     this.canvas.style.cursor = "pointer";
@@ -71,7 +72,7 @@ class PieChard extends HTMLElement {
     return ["radius"];
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     switch (name) {
       case "radius":
         this.oldValue = oldValue;
@@ -80,7 +81,7 @@ class PieChard extends HTMLElement {
     }
   }
 
-  connectedCallback() {
+   connectedCallback() {
     this.render();
   }
 }
